@@ -1,80 +1,69 @@
---Sub Query
---ต้องการข้อมูลคนที่มีตำเเหน่งเดียวกับ Nancy
------- 1.หาตำเเหน่งของ nancy ก่อน
-SELECT Title 
-FROM Employees 
-WHERE FirstName = 'nancy'
+-- Sub Query
+--ต้องการข้อมูลคนที่มีตำแหน่งเดียวกับ Nancy
+-- 1. หาตำแหน่ง Nancy ก่อน
+Select title from Employees where FirstName = 'Nancy'
+-- 2.หาตำแหน่งข้อมูลที่มีตำแหน่งเดียวกัน กับข้อที่ 1
+Select *
+from Employees
+where title = (Select Title from Employees where FirstName='Nancy')
 
------- 2.หาตำเเหน่งข้อมูลที่มีตำเเหน่งเดียวกับข้อที่ 1
-SELECT * 
+--ต้องการชื่อนามสกุลพนักงานที่มีอายุมากที่สุด
+Select FirstName, LastName from Employees 
+where BirthDate = (Select min(BirthDate) from Employees)
+--ต้องการชื่อสินค้าที่มีราคากว่าสินค้าชื่อ Ikura
+Select ProductName from Products
+where UnitPrice > (Select UnitPrice from Products where ProductName = 'Ikura')
+--ต้องการชื่อบริบัทลูกค้าที่อยู่ในเมืองเดียวกับบริษัท ชื่อ Arouund the horn
+Select CompanyName from Customers 
+where city = (Select city from Customers where CompanyName='Around the Horn')
+--ต้องการชื่อนามสกุลพนักงานที่เข้างานคนล่าสุด
+SELECT FirstName, LastName
 FROM Employees
-WHERE Title = (SELECT Title FROM Employees WHERE FirstName = 'nancy')
+WHERE HireDate = (SELECT MAX(HireDate) FROM Employees);
 
---ต้องการชื่อนามสกุลพนักงานที่อายุมากที่สุด
-SELECT Firstname,LastName
-FROM Employees
-Where BirthDate = (SELECT min(BirthDate) FROM Employees)
+--ข้อมูลใบสั่งซื้อที่ถูกส่งไปประเทศที่ไม่มีผู้ผลิตสินค้าตั้งอยู่
+Select * from Orders
+where ShipCountry not in (Select distinct country from Suppliers) 
 
-SELECT ProductName
-FROM Products
-WHERE UnitPrice > (SELECT UnitPrice FROM Products WHERE ProductName = 'Ikura')
+--การใส่เลขลำดับ
+--ต้องการข้อมูลสินค้าที่มีราคาน้อยกว่า 50$
+Select ROW_NUMBER() over (order by unitprice desc) AS Rownum, ProductName,UnitPrice from Products
+where UnitPrice < 50
 
-SELECT CompanyName
-FROM Customers
-WHERE City = (SELECT city FROM Customers WHERE CompanyName = 'Around the Horn')
+--Insert
+-- ตาราง มี PK เป็น AutoIncrement
+Insert into Shippers
+values('บริษัทขนเยอะจำกัด', '081-123456789')
 
-SELECT FirstName,LastName
-FROM Employees
-WHERE HireDate = (SELECT MAX(HireDate) FROM Employees)
+insert into Shippers(CompanyName)
+values('บริษัทขนเยอะมหาศาจำกัด')
 
-SELECT *
-FROM Orders
-WHERE ShipCountry not in (SELECT Distinct Country FROM Suppliers)
+--ตารางที่มี PK เป็น char, nChar
+insert into Customers(CustomerID,CompanyName)
+values ('A0001', 'บริษัทขายน้อยจำไม่กัด')
 
-SELECT * over (order by unitprice desc) AS 
+--จงเพิ่มข้อมูลพนักงาน 1 คน (ใส่ข้อมูลเท่าที่มี)
+insert into Employees(FirstName,LastName)
+values ('Jitpanu','Yottiwong')
 
-SELECT * 
-FROM Shippers
+--จงเพิ่มสินค้า ปลาร้าไม่บอง ราคา1.5$ จำนวน 12
+insert into Products(ProductName,UnitPrice,UnitsInStock)
+values('ปลาแดกบอง','1.5','12')
 
-INSERT INTO Shippers
-VALUES ('บริษัทขนเยอะจำกัด','081-12345678')
 
-INSERT INTO Shippers(CompanyName)
-VALUES ('บริษัทขนมมหาศาสจำกัด')
+--วิธีลบ
+delete from Shippers where CompanyName='บริษัทขนเยอะมหาศาจำกัด'
 
-SELECT * FROM Customers
 
-INSERT INTO Customers(CustomerID,CompanyName)
-VALUES ('A0001','บริษัทซื้อเยอะจำกัด')
+--ปรับปรุงจำนวนสินค้าคงเหลือสินค้ารหัส1 เพิ่ใจำนวนเข้าไป 100 ชิ้น
+update Products
+set UnitsInStock = UnitsInStock+100
+where ProductID = 1
+--ปรับปรุง เมือง และประเทศลูกค้า รหัส A0001 ให้เป็น อุดรธาณี thai;land
+update Customers
+set City = 'อุดรธานี', Country = 'Thailand'
+where CustomerID ='A0001'
 
-SELECT * FROM Employees
-
-INSERT INTO Employees(FirstName,LastName)
-VALUES ('วุ้นเส้น','ข้าวปุ้น')
-
-SELECT * FROM Products
-
-INSERT INTO Products(ProductName,UnitPrice,UnitsInStock)
-VALUES ('ปลาเเดกบอง',1.5,12)
-
-UPDATE Shippers
-SET Phone = '085-9999999'
-WHERE ShipperID = 6
-
-SELECT * FROM Shippers
-
-UPDATE Products
-SET UnitsInStock = UnitsInStock+100
-WHERE ProductID = 1
-
-SELECT * FROM Customers
-
-UPDATE Customers 
-SET City = 'อุดรธานี' , Country = 'Thailand'
-WHERE CustomerID = 'A0001'
-
-SELECT * FROM Products
-DELETE FROM Products
-WHERE ProductName = 'ปลาเเดกบอง'
-
-SELECT * FROM Orders
+select * from Customers
+select * from Employees
+select * from Products
