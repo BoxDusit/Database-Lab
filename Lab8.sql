@@ -32,3 +32,49 @@ FROM Orders
 WHERE ShipCountry not in (SELECT Distinct Country FROM Suppliers)
 
 SELECT * over (order by unitprice desc) AS 
+
+SELECT * 
+FROM Shippers
+
+INSERT INTO Shippers
+VALUES ('บริษัทขนเยอะจำกัด','081-12345678')
+
+INSERT INTO Shippers(CompanyName)
+VALUES ('บริษัทขนมมหาศาสจำกัด')
+
+SELECT * FROM Customers
+
+INSERT INTO Customers(CustomerID,CompanyName)
+VALUES ('A0001','บริษัทซื้อเยอะจำกัด')
+
+SELECT * FROM Employees
+
+INSERT INTO Employees(FirstName,LastName)
+VALUES ('วุ้นเส้น','ข้าวปุ้น')
+
+SELECT * FROM Products
+
+INSERT INTO Products(ProductName,UnitPrice,UnitsInStock)
+VALUES ('ปลาเเดกบอง',1.5,12)
+
+UPDATE Shippers
+SET Phone = '085-9999999'
+WHERE ShipperID = 6
+
+SELECT * FROM Shippers
+
+UPDATE Products
+SET UnitsInStock = UnitsInStock+100
+WHERE ProductID = 1
+
+SELECT * FROM Customers
+
+UPDATE Customers 
+SET City = 'อุดรธานี' , Country = 'Thailand'
+WHERE CustomerID = 'A0001'
+
+SELECT * FROM Products
+DELETE FROM Products
+WHERE ProductName = 'ปลาเเดกบอง'
+
+SELECT * FROM Orders
